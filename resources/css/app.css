@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-50: #fff4ed;
+    --color-brand-100: #ffe6d5;
+    --color-brand-200: #ffc9a8;
+    --color-brand-300: #ffa270;
+    --color-brand-400: #ff7f45;
+    --color-brand-500: #f5641e;
+    --color-brand-600: #e6540f;
+    --color-brand-700: #bf420c;
+    --color-brand-800: #973512;
+    --color-brand-900: #7a2e12;
+}
+
+body {
+    background-color: #f6f7fb;
+}
+
+.status-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium;
+}
+
+[x-cloak] {
+    display: none !important;
+}
