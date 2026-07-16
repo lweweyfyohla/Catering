@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/pipeline', [DashboardController::class, 'pipeline'])->name('pipeline.index');
 
     // Events
     Route::get('/events', [EventController::class, 'index'])->name('events.index');

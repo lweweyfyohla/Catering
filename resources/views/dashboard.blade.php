@@ -19,6 +19,21 @@
         @endforeach
     </div>
 
+    @if ($pipelineEvents->isNotEmpty())
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-slate-900">Procurement Timeline</h2>
+                <a href="{{ route('pipeline.index') }}" class="text-sm text-brand-600 font-medium hover:underline">See more</a>
+            </div>
+
+            <div class="space-y-4">
+                @foreach ($pipelineEvents as $item)
+                    <x-pipeline-card :item="$item" />
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm">
         <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
             <h2 class="font-semibold text-slate-900">Upcoming Events</h2>
