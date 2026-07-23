@@ -12,8 +12,9 @@ class DashboardController extends Controller
 {
     /**
      * The full procurement pipeline, in order.
-     * "quotation" and "paid" aren't stored on Event.status directly,
-     * they're inferred from position between the tracked statuses.
+     * "quotation" and "paid" aren't valid Event::status values (the DB enum only
+     * allows draft/sourcing/ordered/delivered/closed), so they're inferred below
+     * from whether a quotation is pending and whether the payment has been made.
      */
     protected array $stages = ['draft', 'sourcing', 'quotation', 'ordered', 'delivered', 'paid', 'closed'];
 
@@ -57,9 +58,34 @@ class DashboardController extends Controller
             ->map(fn (Event $event) => $this->buildPipelineItem($event));
     }
 
+    /**
+     * Work out which pipeline step an event is really on. Event::status only
+     * tracks the 5 stored states, so "quotation" and "paid" are derived from
+     * related quotation/payment records rather than the status column.
+     */
+    protected function resolveStageKey(Event $event): string
+    {
+        if ($event->status === 'sourcing') {
+            // A quote request has been sent and is awaiting a supplier's response:
+            // that's the "quotation" step, not still "sourcing".
+            $hasPendingQuotation = $event->quotations()->where('status', 'pending')->exists();
+
+            return $hasPendingQuotation ? 'quotation' : 'sourcing';
+        }
+
+        if ($event->status === 'delivered') {
+            $acceptedQuotation = $event->quotations()->where('status', 'accepted')->latest()->first();
+            $payment = $acceptedQuotation?->purchaseOrder?->payment;
+
+            return $payment?->payment_status === 'paid' ? 'paid' : 'delivered';
+        }
+
+        return $event->status;
+    }
+
     protected function buildPipelineItem(Event $event): array
     {
-        $currentIndex = array_search($event->status, $this->stages);
+        $currentIndex = array_search($this->resolveStageKey($event), $this->stages);
         $currentIndex = $currentIndex === false ? 0 : $currentIndex;
 
         $daysLeft = (int) now()->startOfDay()->diffInDays($event->event_date, false);

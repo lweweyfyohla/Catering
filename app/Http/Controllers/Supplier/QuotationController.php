@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\Supplier;
+
+use App\Http\Controllers\Controller;
+use App\Models\PurchaseOrder;
+use App\Models\Quotation;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+
+class QuotationController extends Controller
+{
+    public function index(): View
+    {
+        $supplierId = Auth::user()->supplier_id;
+
+        $quotations = Quotation::with(['event.user'])
+            ->where('supplier_id', $supplierId)
+            ->latest('sent_at')
+            ->get();
+
+        return view('supplier.quotations.index', compact('quotations'));
+    }
+
+    public function updateStatus(Request $request, Quotation $quotation): RedirectResponse
+    {
+        abort_unless($quotation->supplier_id === Auth::user()->supplier_id, 403);
+        abort_unless($quotation->status === 'pending', 422, 'This quote request has already been resolved.');
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:accepted,cancel'],
+        ]);
+
+        $quotation->update(['status' => $validated['status']]);
+
+        if ($validated['status'] === 'accepted') {
+            PurchaseOrder::create([
+                'quotation_id' => $quotation->id,
+                'po_number' => 'PO-'.now()->format('Y').'-'.str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
+                'total_price' => $quotation->total_price,
+                'status' => 'issued',
+                'delivery_status' => 'pending',
+                'issued_at' => now(),
+            ]);
+
+            $quotation->event->update(['status' => 'ordered']);
+
+            return back()->with('success', 'Quote confirmed. The order has been sent to Purchase Orders.');
+        }
+
+        return back()->with('success', 'Quote request rejected.');
+    }
+}

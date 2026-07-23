@@ -72,6 +72,14 @@ class DatabaseSeeder extends Seeder
             'registered_at' => '2024-01-15',
         ]);
 
+        User::create([
+            'name' => 'Monorom Catering',
+            'email' => 'sale@monoromcatering.com',
+            'password' => Hash::make('password'),
+            'role' => 'supplier',
+            'supplier_id' => $monorom->id,
+        ]);
+
         $morodok = Supplier::create([
             'name' => 'Morodok Restaurant',
             'contact_email' => 'sale@morodokres.com',

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SupplierLoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\Supplier\QuotationController as SupplierQuotationController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +24,20 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'store']);
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store']);
+
+    Route::get('/supplier/login', [SupplierLoginController::class, 'create'])->name('supplier.login');
+    Route::post('/supplier/login', [SupplierLoginController::class, 'store'])->name('supplier.login.store');
 });
 
-Route::middleware('auth')->group(function () {
+// Supplier portal: separate login, separate area, no access to the customer/admin side.
+Route::middleware(['auth', 'supplier.role'])->prefix('supplier')->name('supplier.')->group(function () {
+    Route::post('/logout', [SupplierLoginController::class, 'destroy'])->name('logout');
+
+    Route::get('/quotations', [SupplierQuotationController::class, 'index'])->name('quotations.index');
+    Route::patch('/quotations/{quotation}/status', [SupplierQuotationController::class, 'updateStatus'])->name('quotations.update-status');
+});
+
+Route::middleware(['auth', 'not.supplier'])->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

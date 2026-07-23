@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class LoginController extends Controller
+class SupplierLoginController extends Controller
 {
     public function create(): View
     {
-        return view('auth.login');
+        return view('auth.supplier-login');
     }
 
     public function store(Request $request): RedirectResponse
@@ -28,17 +28,17 @@ class LoginController extends Controller
             ])->onlyInput('email');
         }
 
-        if (Auth::user()->isSupplier()) {
+        if (! Auth::user()->isSupplier()) {
             Auth::logout();
 
             return back()->withErrors([
-                'email' => 'Supplier accounts sign in from the supplier portal.',
+                'email' => 'This account is not a supplier account. Please use the regular login page.',
             ])->onlyInput('email');
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('supplier.quotations.index'));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -48,6 +48,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('supplier.login');
     }
 }

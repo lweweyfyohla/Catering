@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\CartItem;
 use App\Models\Event;
-use App\Models\PurchaseOrder;
 use App\Models\Quotation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +20,14 @@ class QuotationController extends Controller
             ->latest('sent_at')
             ->get();
 
-        return view('quotations.index', compact('quotations'));
+        $compareEvents = Event::query()
+            ->where('user_id', Auth::id())
+            ->whereHas('cartItems', fn ($q) => $q->whereNull('quotation_id'))
+            ->withCount(['cartItems' => fn ($q) => $q->whereNull('quotation_id')])
+            ->latest()
+            ->get();
+
+        return view('quotations.index', compact('quotations', 'compareEvents'));
     }
 
     public function compare(Event $event): View
@@ -80,29 +86,22 @@ class QuotationController extends Controller
         return redirect()->route('quotations.index')->with('success', 'Quote request sent to supplier.');
     }
 
+    /**
+     * Customer-side action: the event owner can only withdraw a request while
+     * it's still pending. Accepting a quote is now done by the supplier
+     * themselves, from the supplier portal (see Supplier\QuotationController).
+     */
     public function updateStatus(Request $request, Quotation $quotation): RedirectResponse
     {
         abort_unless($quotation->event->user_id === Auth::id(), 403);
+        abort_unless($quotation->status === 'pending', 422, 'This quote request has already been resolved.');
 
-        $validated = $request->validate([
-            'status' => ['required', 'in:accepted,cancel'],
+        $request->validate([
+            'status' => ['required', 'in:cancel'],
         ]);
 
-        $quotation->update(['status' => $validated['status']]);
+        $quotation->update(['status' => 'cancel']);
 
-        if ($validated['status'] === 'accepted') {
-            PurchaseOrder::create([
-                'quotation_id' => $quotation->id,
-                'po_number' => 'PO-'.now()->format('Y').'-'.str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
-                'total_price' => $quotation->total_price,
-                'status' => 'issued',
-                'delivery_status' => 'pending',
-                'issued_at' => now(),
-            ]);
-
-            $quotation->event->update(['status' => 'ordered']);
-        }
-
-        return back()->with('success', 'Quotation '.$validated['status'].'.');
+        return back()->with('success', 'Quote request withdrawn.');
     }
 }

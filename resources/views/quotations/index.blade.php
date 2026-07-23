@@ -4,12 +4,13 @@
     <div class="flex gap-6 border-b border-slate-100 mb-6">
         <button @click="tab = 'requests'" :class="tab === 'requests' ? 'border-brand-500 text-brand-600' : 'border-transparent text-slate-400'"
                 class="pb-3 text-sm font-medium border-b-2 transition">Quote Request</button>
-        <button @click="tab = 'all'" :class="tab === 'all' ? 'border-brand-500 text-brand-600' : 'border-transparent text-slate-400'"
-                class="pb-3 text-sm font-medium border-b-2 transition">View Quotes Request</button>
+        <button @click="tab = 'compare'" :class="tab === 'compare' ? 'border-brand-500 text-brand-600' : 'border-transparent text-slate-400'"
+                class="pb-3 text-sm font-medium border-b-2 transition">Compare Quotes</button>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        @if ($quotations->isEmpty())
+    <div x-show="tab === 'requests'" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        @php $pending = $quotations->where('status', 'pending'); @endphp
+        @if ($pending->isEmpty())
             <p class="px-6 py-12 text-center text-sm text-slate-400">No quotations sent yet. Add items to your cart and request a quote from a supplier.</p>
         @else
             <div class="overflow-x-auto">
@@ -24,8 +25,8 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
-                        @foreach ($quotations as $quotation)
-                            <tr x-show="tab === 'requests' ? {{ $quotation->status === 'pending' ? 'true' : 'false' }} : true">
+                        @foreach ($pending as $quotation)
+                            <tr>
                                 <td class="px-6 py-4 font-medium text-slate-800">{{ $quotation->event->event_name }}</td>
                                 <td class="px-6 py-4 text-slate-500">{{ $quotation->supplier->name }}</td>
                                 <td class="px-6 py-4 text-slate-500">{{ $quotation->sent_at?->format('M j, Y') }}</td>
@@ -35,6 +36,40 @@
                                             class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
                                     </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
+    <div x-show="tab === 'compare'" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        @if ($compareEvents->isEmpty())
+            <p class="px-6 py-12 text-center text-sm text-slate-400">No events with items in cart yet. Add items to your cart to compare supplier quotes.</p>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-slate-400 text-xs uppercase tracking-wide bg-slate-50">
+                            <th class="px-6 py-3 font-medium">Event</th>
+                            <th class="px-6 py-3 font-medium">Event Date</th>
+                            <th class="px-6 py-3 font-medium">Items in Cart</th>
+                            <th class="px-6 py-3 font-medium text-right">Compare</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @foreach ($compareEvents as $event)
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-slate-800">{{ $event->event_name }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ $event->event_date->format('M j, Y') }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ $event->cart_items_count }} item(s)</td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('quotations.compare', $event) }}"
+                                       class="inline-flex items-center gap-1 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-medium px-3 py-1.5">
+                                        Compare Quotes
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
@@ -107,15 +142,11 @@
             </div>
             <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
                 @if ($quotation->status === 'pending')
+                    <p class="text-xs text-slate-400 mr-auto self-center">Waiting on the supplier to confirm this quote.</p>
                     <form method="POST" action="{{ route('quotations.update-status', $quotation) }}">
                         @csrf @method('PATCH')
                         <input type="hidden" name="status" value="cancel">
-                        <button type="submit" class="rounded-lg border border-red-200 text-red-500 text-sm font-medium px-4 py-2 hover:bg-red-50">Cancel request</button>
-                    </form>
-                    <form method="POST" action="{{ route('quotations.update-status', $quotation) }}">
-                        @csrf @method('PATCH')
-                        <input type="hidden" name="status" value="accepted">
-                        <button type="submit" class="rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2">Accept quote</button>
+                        <button type="submit" class="rounded-lg border border-red-200 text-red-500 text-sm font-medium px-4 py-2 hover:bg-red-50">Withdraw request</button>
                     </form>
                 @else
                     <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"

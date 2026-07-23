@@ -58,7 +58,7 @@
                                 @foreach ($items as $item)
                                     <a href="{{ route($item['route']) }}"
                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
-                                              {{ request()->routeIs($item['route'].'*') || (str_starts_with($item['route'], 'events') && request()->routeIs('quotations.compare'))
+                                              {{ request()->routeIs($item['route'].'*') || ($item['route'] === 'quotations.index' && request()->routeIs('quotations.compare'))
                                                     ? 'bg-brand-50 text-brand-600'
                                                     : 'text-slate-600 hover:bg-slate-50' }}">
                                         <x-nav-icon :name="$item['icon']" />
