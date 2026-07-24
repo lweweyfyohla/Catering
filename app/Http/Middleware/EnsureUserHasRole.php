@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsSupplier
+class EnsureUserHasRole
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        abort_unless(Auth::check() && Auth::user()->isSupplier(), 403);
+        abort_unless(Auth::check() && in_array(Auth::user()->role, $roles, true), 403);
 
         return $next($request);
     }

@@ -140,19 +140,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-                @if ($quotation->status === 'pending')
-                    <p class="text-xs text-slate-400 mr-auto self-center">Waiting on the supplier to confirm this quote.</p>
-                    <form method="POST" action="{{ route('quotations.update-status', $quotation) }}">
-                        @csrf @method('PATCH')
-                        <input type="hidden" name="status" value="cancel">
-                        <button type="submit" class="rounded-lg border border-red-200 text-red-500 text-sm font-medium px-4 py-2 hover:bg-red-50">Withdraw request</button>
-                    </form>
-                @else
-                    <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
-                            class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">Close</button>
-                @endif
-            </div>
+            
         </x-modal>
     @endforeach
 </x-layouts.app>

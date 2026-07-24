@@ -3,14 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
-use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class MenuItemController extends Controller
 {
-    public function store(Request $request, Supplier $supplier): RedirectResponse
+    public function index(): View
     {
+        $supplier = Auth::user()->supplier;
+        abort_unless($supplier, 403);
+
+        $menuItems = $supplier->menuItems()->orderBy('item_name')->get();
+
+        return view('supplier.menu-items.index', compact('menuItems'));
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $supplier = Auth::user()->supplier;
+        abort_unless($supplier, 403);
+
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -29,6 +43,8 @@ class MenuItemController extends Controller
 
     public function update(Request $request, MenuItem $menuItem): RedirectResponse
     {
+        abort_unless($menuItem->supplier_id === Auth::user()->supplier_id, 403);
+
         $validated = $request->validate([
             'item_name' => ['required', 'string', 'max:150'],
             'description' => ['nullable', 'string'],
@@ -42,6 +58,8 @@ class MenuItemController extends Controller
 
     public function destroy(MenuItem $menuItem): RedirectResponse
     {
+        abort_unless($menuItem->supplier_id === Auth::user()->supplier_id, 403);
+
         $menuItem->delete();
 
         return back()->with('success', 'Menu item removed.');

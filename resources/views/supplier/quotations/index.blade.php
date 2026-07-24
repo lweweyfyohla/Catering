@@ -1,95 +1,163 @@
-<x-layouts.supplier title="Quote Requests - CaterSource Supplier Portal" page-title="Quote Requests" :page-subtitle="now()->format('l, F j, Y')">
+<x-layouts.supplier
+    title="Quotation Requests"
+    page-title="Quotation Requests"
+    :page-subtitle="now()->format('l, F j, Y')">
 
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        @if ($quotations->isEmpty())
-            <p class="px-6 py-12 text-center text-sm text-slate-400">No quote requests yet.</p>
-        @else
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="text-left text-slate-400 text-xs uppercase tracking-wide bg-slate-50">
-                            <th class="px-6 py-3 font-medium">Event</th>
-                            <th class="px-6 py-3 font-medium">Customer</th>
-                            <th class="px-6 py-3 font-medium">Sent Date</th>
-                            <th class="px-6 py-3 font-medium">Total</th>
-                            <th class="px-6 py-3 font-medium">Status</th>
-                            <th class="px-6 py-3 font-medium text-right">Action</th>
+<div class="space-y-6">
+
+    @forelse($quotations as $quotation)
+
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div>
+                    <h2 class="font-semibold text-slate-900">
+                        Quotation #{{ $quotation->id }}
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        <strong>Event:</strong>
+                        {{ $quotation->event->event_name }}
+                    </p>
+
+                    <p class="text-sm text-slate-500">
+                        <strong>Customer:</strong>
+                        {{ $quotation->event->user->name }}
+                    </p>
+
+                    <p class="text-sm text-slate-500">
+                        Event Date:
+                        <span class="font-medium text-slate-800">
+                            {{ $quotation->event->event_date->format('M d, Y') }}
+                        </span>
+                    </p>
+                </div>
+
+                <x-status-badge :status="$quotation->status" />
+            </div>
+
+            <!-- Requested Items -->
+            <div class="px-6 py-5">
+
+                <h3 class="font-medium text-slate-800 mb-3">
+                    Requested Items
+                </h3>
+
+                <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="text-left px-4 py-2">Item</th>
+                            <th class="text-center px-4 py-2">Qty</th>
+                            <th class="text-right px-4 py-2">Unit Price</th>
+                            <th class="text-right px-4 py-2">Subtotal</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50">
-                        @foreach ($quotations as $quotation)
-                            <tr>
-                                <td class="px-6 py-4 font-medium text-slate-800">{{ $quotation->event->event_name }}</td>
-                                <td class="px-6 py-4 text-slate-500">{{ $quotation->event->user->name }}</td>
-                                <td class="px-6 py-4 text-slate-500">{{ $quotation->sent_at?->format('M j, Y') }}</td>
-                                <td class="px-6 py-4 text-slate-700 font-medium">${{ number_format($quotation->total_price, 2) }}</td>
-                                <td class="px-6 py-4"><x-status-badge :status="$quotation->status" /></td>
-                                <td class="px-6 py-4 text-right">
-                                    @if ($quotation->status === 'pending')
-                                        <button onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'req-{{ $quotation->id }}'}))"
-                                                class="rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-medium px-3 py-1.5">
-                                            Review
-                                        </button>
-                                    @else
-                                        <span class="text-xs text-slate-300">&mdash;</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
+
+                    <tbody>
+
+                    @foreach($quotation->cartItems as $item)
+
+                        <tr class="border-t border-slate-100">
+                            <td class="px-4 py-3">
+                                {{ $item->menuItem->item_name }}
+                            </td>
+
+                            <td class="px-4 py-3 text-center">
+                                {{ $item->quantity }}
+                            </td>
+
+                            <td class="px-4 py-3 text-right">
+                                ${{ number_format($item->unit_price, 2) }}
+                            </td>
+
+                            <td class="px-4 py-3 text-right font-medium">
+                                ${{ number_format($item->total_price, 2) }}
+                            </td>
+                        </tr>
+
+                    @endforeach
+
                     </tbody>
                 </table>
-            </div>
-        @endif
-    </div>
 
-    @foreach ($quotations->where('status', 'pending') as $quotation)
-        <x-modal :name="'req-'.$quotation->id" max-width="md">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                <h3 class="font-semibold text-slate-900">Quote request</h3>
-                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))" class="text-slate-400 hover:text-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="px-6 py-5 grid grid-cols-2 gap-4">
-                <div>
-                    <p class="text-xs text-slate-400">Event</p>
-                    <p class="text-sm font-medium text-slate-800 mt-1">{{ $quotation->event->event_name }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400">Event date</p>
-                    <p class="text-sm font-medium text-slate-800 mt-1">{{ $quotation->event->event_date->format('M j, Y') }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400">Customer</p>
-                    <p class="text-sm font-medium text-slate-800 mt-1">{{ $quotation->event->user->name }}</p>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-400">Guests</p>
-                    <p class="text-sm font-medium text-slate-800 mt-1">{{ $quotation->event->guest_count }}</p>
-                </div>
-                <div class="col-span-2">
-                    <p class="text-xs text-slate-400">Total price</p>
-                    <p class="text-lg font-bold text-brand-600 mt-1">${{ number_format($quotation->total_price, 2) }}</p>
-                </div>
-                @if ($quotation->notes)
-                    <div class="col-span-2">
-                        <p class="text-xs text-slate-400">Note from customer</p>
-                        <p class="text-sm text-slate-600 bg-slate-50 rounded-lg px-3 py-2 mt-1">{{ $quotation->notes }}</p>
+                @if($quotation->notes)
+                    <div class="mt-4 rounded-lg bg-amber-50 border border-amber-100 p-4">
+                        <p class="text-sm font-medium text-amber-700">
+                            Customer Note
+                        </p>
+
+                        <p class="text-sm text-amber-700 mt-1">
+                            {{ $quotation->notes }}
+                        </p>
                     </div>
                 @endif
+
+                <div class="mt-5 flex items-center justify-between">
+                    <span class="text-lg font-semibold text-slate-900">
+                        Total
+                    </span>
+
+                    <span class="text-xl font-bold text-brand-600">
+                        ${{ number_format($quotation->total_price, 2) }}
+                    </span>
+                </div>
+
             </div>
-            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-                <form method="POST" action="{{ route('supplier.quotations.update-status', $quotation) }}">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" value="cancel">
-                    <button type="submit" class="rounded-lg border border-red-200 text-red-500 text-sm font-medium px-4 py-2 hover:bg-red-50">Reject</button>
-                </form>
-                <form method="POST" action="{{ route('supplier.quotations.update-status', $quotation) }}">
-                    @csrf @method('PATCH')
-                    <input type="hidden" name="status" value="accepted">
-                    <button type="submit" class="rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2">Confirm quote</button>
-                </form>
-            </div>
-        </x-modal>
-    @endforeach
+
+            <!-- Footer -->
+            @if($quotation->status === 'pending')
+
+                <div class="flex justify-end gap-3 px-6 py-4 border-t border-slate-100">
+
+                    <form method="POST"
+                          action="{{ route('supplier.quotations.update-status', $quotation) }}">
+                        @csrf
+                        @method('PATCH')
+
+                        <input type="hidden"
+                               name="status"
+                               value="rejected">
+
+                        <button
+                            class="px-5 py-2 rounded-lg border border-red-300 text-red-600 hover:bg-red-50">
+                            Reject
+                        </button>
+
+                    </form>
+
+                    <form method="POST"
+                          action="{{ route('supplier.quotations.update-status', $quotation) }}">
+                        @csrf
+                        @method('PATCH')
+
+                        <input type="hidden"
+                               name="status"
+                               value="accepted">
+
+                        <button
+                            class="px-5 py-2 rounded-lg bg-brand-500 text-white hover:bg-brand-600">
+                            Accept Quote
+                        </button>
+
+                    </form>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    @empty
+
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm px-6 py-12 text-center">
+            <p class="text-slate-400">
+                No quotation requests received.
+            </p>
+        </div>
+
+    @endforelse
+
+</div>
+
 </x-layouts.supplier>

@@ -46,6 +46,10 @@ class User extends Authenticatable
         return $this->belongsTo(Supplier::class);
     }
 
+    public function isCustomer(): bool
+    {
+        return $this->role === 'user';
+    }
     /**
      * Get the attributes that should be cast.
      *

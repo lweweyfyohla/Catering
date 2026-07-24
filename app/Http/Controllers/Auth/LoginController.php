@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,17 +29,9 @@ class LoginController extends Controller
             ])->onlyInput('email');
         }
 
-        if (Auth::user()->isSupplier()) {
-            Auth::logout();
-
-            return back()->withErrors([
-                'email' => 'Supplier accounts sign in from the supplier portal.',
-            ])->onlyInput('email');
-        }
-
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended($this->redirectPathFor(Auth::user()));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -49,5 +42,14 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    private function redirectPathFor(User $user): string
+    {
+        return match ($user->role) {
+            'supplier' => route('supplier.quotations.index'),
+            'admin' => route('admin.dashboard'),
+            default => route('dashboard'),
+        };
     }
 }

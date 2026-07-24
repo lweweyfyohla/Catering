@@ -97,11 +97,11 @@ class QuotationController extends Controller
         abort_unless($quotation->status === 'pending', 422, 'This quote request has already been resolved.');
 
         $request->validate([
-            'status' => ['required', 'in:cancel'],
+            'status' => ['required', 'in:rejected'],
         ]);
 
-        $quotation->update(['status' => 'cancel']);
+        $quotation->update(['status' => 'rejected']);
 
-        return back()->with('success', 'Quote request withdrawn.');
+        return back()->with('success', 'Quote request rejected.');
     }
 }

@@ -40,19 +40,18 @@ class PurchaseOrderController extends Controller
         return back()->with('success', 'Purchase order cancelled.');
     }
 
-    public function confirmDelivery(PurchaseOrder $purchaseOrder): RedirectResponse
+    public function confirmDelivery(PurchaseOrder $purchaseOrder)
     {
-        $this->authorizeOwner($purchaseOrder);
+        abort_unless(
+            $purchaseOrder->quotation->event->user_id === auth()->id(),
+            403
+        );
 
         $purchaseOrder->update([
-            'delivery_status' => 'delivered',
-            'delivered_at' => now(),
-            'goods_verified' => true,
+            'delivery_status' => 'completed',
         ]);
 
-        $purchaseOrder->quotation->event->update(['status' => 'delivered']);
-
-        return back()->with('success', 'Delivery confirmed.');
+        return back()->with('success', 'Delivery confirmed successfully.');
     }
 
     public function uploadInvoice(Request $request, PurchaseOrder $purchaseOrder): RedirectResponse

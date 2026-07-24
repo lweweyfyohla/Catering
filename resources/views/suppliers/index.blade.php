@@ -1,17 +1,12 @@
 <x-layouts.app title="Suppliers - CaterSource" page-title="Suppliers" :page-subtitle="now()->format('l, F j, Y')">
 
     <div class="flex items-center justify-between mb-6">
-        <p class="text-sm text-slate-500">Browse and manage your supplier network</p>
+        <p class="text-sm text-slate-500">Browse suppliers and their menus</p>
         <div class="flex items-center gap-3">
             <a href="{{ route('cart.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-brand-50 text-brand-600 text-sm font-medium px-4 py-2.5 hover:bg-brand-100">
                 <x-nav-icon name="cart" />
                 View Cart
             </a>
-            <button onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'new-supplier'}))"
-                    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2.5 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Supplier
-            </button>
         </div>
     </div>
 
@@ -29,7 +24,7 @@
 
     @if ($suppliers->isEmpty())
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm px-6 py-12 text-center text-sm text-slate-400">
-            No suppliers found. Add your first supplier to get started.
+            No suppliers found yet.
         </div>
     @else
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -52,60 +47,4 @@
             @endforeach
         </div>
     @endif
-
-    <x-modal name="new-supplier" max-width="2xl">
-        <form method="POST" action="{{ route('suppliers.store') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                <h3 class="font-semibold text-slate-900">New Supplier</h3>
-                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))" class="text-slate-400 hover:text-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="px-6 py-5 grid grid-cols-2 gap-4">
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Supplier name</label>
-                    <input type="text" name="name" required placeholder="e.g. KOI Cambodia" class="w-full rounded-lg border-slate-200 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Supplier Logo</label>
-                    <input type="file" name="logo" accept="image/*" class="w-full text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Cover image</label>
-                    <input type="file" name="image_cover" accept="image/*" class="w-full text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Supplier Category</label>
-                    <select name="category" required class="w-full rounded-lg border-slate-200 text-sm">
-                        <option value="catering">Catering</option>
-                        <option value="beverage">Beverage</option>
-                        <option value="dessert">Dessert</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Address</label>
-                    <input type="text" name="address" class="w-full rounded-lg border-slate-200 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Supplier email</label>
-                    <input type="email" name="contact_email" class="w-full rounded-lg border-slate-200 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Phone number</label>
-                    <input type="text" name="phone" class="w-full rounded-lg border-slate-200 text-sm">
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Supplier Description</label>
-                    <textarea name="notes" rows="4" class="w-full rounded-lg border-slate-200 text-sm"></textarea>
-                </div>
-            </div>
-            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
-                        class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">Cancel</button>
-                <button type="submit" class="rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2">Add Supplier</button>
-            </div>
-        </form>
-    </x-modal>
 </x-layouts.app>

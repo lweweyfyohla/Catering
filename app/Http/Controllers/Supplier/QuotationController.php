@@ -16,10 +16,14 @@ class QuotationController extends Controller
     {
         $supplierId = Auth::user()->supplier_id;
 
-        $quotations = Quotation::with(['event.user'])
-            ->where('supplier_id', $supplierId)
-            ->latest('sent_at')
-            ->get();
+        $quotations = Quotation::with([
+            'event.user',
+            'cartItems.menuItem'
+        ])
+        ->where('supplier_id', $supplierId)
+        ->where('status', 'pending')
+        ->latest('sent_at')
+        ->get();
 
         return view('supplier.quotations.index', compact('quotations'));
     }
@@ -30,22 +34,26 @@ class QuotationController extends Controller
         abort_unless($quotation->status === 'pending', 422, 'This quote request has already been resolved.');
 
         $validated = $request->validate([
-            'status' => ['required', 'in:accepted,cancel'],
+            'status' => ['required', 'in:accepted,rejected'],
         ]);
 
-        $quotation->update(['status' => $validated['status']]);
+        $quotation->update([
+            'status' => $validated['status'],
+        ]);
 
         if ($validated['status'] === 'accepted') {
             PurchaseOrder::create([
                 'quotation_id' => $quotation->id,
-                'po_number' => 'PO-'.now()->format('Y').'-'.str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
+                'po_number' => 'PO-' . now()->format('Y') . '-' . str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
                 'total_price' => $quotation->total_price,
                 'status' => 'issued',
                 'delivery_status' => 'pending',
                 'issued_at' => now(),
             ]);
 
-            $quotation->event->update(['status' => 'ordered']);
+            $quotation->event->update([
+                'status' => 'ordered',
+            ]);
 
             return back()->with('success', 'Quote confirmed. The order has been sent to Purchase Orders.');
         }

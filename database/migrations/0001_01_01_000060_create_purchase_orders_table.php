@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('invoice_file', 255)->nullable();
             $table->dateTime('invoice_date')->nullable();
             $table->enum('status', ['issued', 'confirmed', 'cancelled'])->default('issued');
-            $table->enum('delivery_status', ['pending', 'delivered'])->default('pending');
+            $table->enum('delivery_status', ['pending','delivered','completed'])->default('pending');
             $table->text('issues_reported')->nullable();
             $table->boolean('goods_verified')->default(false);
             $table->dateTime('delivered_at')->nullable();

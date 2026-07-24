@@ -99,49 +99,4 @@
             @endforeach
         </div>
     @endif
-
-    {{-- Admin: quick-add menu item --}}
-    <div class="mt-8">
-        <button onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'new-menu-item'}))"
-                class="inline-flex items-center gap-2 rounded-lg border border-dashed border-slate-300 text-slate-500 text-sm font-medium px-4 py-2.5 hover:bg-slate-50">
-            + Add menu item to {{ $supplier->name }}
-        </button>
-    </div>
-
-    <x-modal name="new-menu-item" max-width="md">
-        <form method="POST" action="{{ route('menu-items.store', $supplier) }}" enctype="multipart/form-data">
-            @csrf
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                <h3 class="font-semibold text-slate-900">New menu item</h3>
-                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))" class="text-slate-400 hover:text-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="px-6 py-5 space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Item name</label>
-                    <input type="text" name="item_name" required class="w-full rounded-lg border-slate-200 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
-                    <textarea name="description" rows="2" class="w-full rounded-lg border-slate-200 text-sm"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Price ($)</label>
-                        <input type="number" step="0.01" name="price" required class="w-full rounded-lg border-slate-200 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Image</label>
-                        <input type="file" name="image" accept="image/*" class="w-full text-sm">
-                    </div>
-                </div>
-            </div>
-            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
-                        class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">Cancel</button>
-                <button type="submit" class="rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2">Add item</button>
-            </div>
-        </form>
-    </x-modal>
 </x-layouts.app>
