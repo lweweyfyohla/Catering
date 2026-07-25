@@ -1,21 +1,34 @@
 @php
-    $navGroups = [
-        'OVERVIEW' => [
-            ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'grid'],
-        ],
-        'OPERATIONS' => [
-            ['label' => 'Events', 'route' => 'events.index', 'icon' => 'calendar'],
-            ['label' => 'Suppliers', 'route' => 'suppliers.index', 'icon' => 'building'],
-            ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'document'],
-        ],
-        'PROCUREMENT' => [
-            ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
-            ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
-        ],
-        'ADMIN' => [
-            ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
-        ],
-    ];
+    $navGroups = auth()->user()->isAdmin()
+        ? [
+            'OVERVIEW' => [
+                ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'grid'],
+            ],
+            'MANAGE' => [
+                ['label' => 'Users', 'route' => 'admin.users.index', 'icon' => 'users'],
+                ['label' => 'Suppliers', 'route' => 'admin.suppliers.index', 'icon' => 'building'],
+            ],
+            'ADMIN' => [
+                ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
+            ],
+        ]
+        : [
+            'OVERVIEW' => [
+                ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'grid'],
+            ],
+            'OPERATIONS' => [
+                ['label' => 'Events', 'route' => 'events.index', 'icon' => 'calendar'],
+                ['label' => 'Suppliers', 'route' => 'suppliers.index', 'icon' => 'building'],
+                ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'document'],
+            ],
+            'PROCUREMENT' => [
+                ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
+                ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
+            ],
+            'ADMIN' => [
+                ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
+            ],
+        ];
 @endphp
 <!DOCTYPE html>
 <html lang="en">

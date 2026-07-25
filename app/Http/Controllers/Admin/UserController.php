@@ -10,24 +10,25 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    /**
+     * Admin: view customer accounts, optionally searched by name.
+     */
+    public function index(Request $request): View
     {
-        $users = User::orderBy('name')->paginate(20);
+        $query = User::where('role', 'user');
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%'.$request->string('search').'%');
+        }
+
+        $users = $query->orderBy('name')->paginate(20)->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }
 
-    public function update(Request $request, User $user): RedirectResponse
-    {
-        $validated = $request->validate([
-            'role' => ['required', 'in:user,admin'],
-        ]);
-
-        $user->update($validated);
-
-        return back()->with('success', 'User updated.');
-    }
-
+    /**
+     * Admin: remove an inappropriate customer account.
+     */
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();
