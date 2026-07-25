@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\QuotationController as AdminQuotationController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
+use App\Http\Controllers\Supplier\PaymentController as SupplierPaymentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Supplier\QuotationController as SupplierQuotationController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', fn () => redirect()->route('login'));
 
@@ -79,6 +81,7 @@ Route::middleware(['auth', 'role:supplier'])->prefix('supplier')->name('supplier
     Route::put('/menu-items/{menuItem}', [MenuItemController::class, 'update'])->name('menu-items.update');
     Route::delete('/menu-items/{menuItem}', [MenuItemController::class, 'destroy'])->name('menu-items.destroy');
     Route::get('/menu-items', [MenuItemController::class, 'index']) ->name('menu-items.index');
+    Route::get('/payments', [SupplierPaymentController::class, 'index']) ->name('payments.index');
 });
 
 // ---------------- ADMIN ----------------

@@ -20,20 +20,19 @@ class PaymentController extends Controller
         return view('payments.index', compact('payments'));
     }
 
-    public function pay(Request $request, Payment $payment): RedirectResponse
+    public function pay(Payment $payment): RedirectResponse
     {
-        abort_unless($payment->purchaseOrder->quotation->event->user_id === Auth::id(), 403);
-
-        $validated = $request->validate([
-            'receipt_no' => ['required', 'string', 'max:100'],
-        ]);
+        abort_unless(
+            $payment->purchaseOrder->quotation->event->user_id === Auth::id(),
+            403
+        );
 
         $payment->update([
             'payment_status' => 'paid',
-            'receipt_no' => $validated['receipt_no'],
+            'receipt_no' => 'RCPT-' . now()->format('Y') . '-' . str_pad($payment->id, 4, '0', STR_PAD_LEFT),
             'paid_at' => now(),
         ]);
 
-        return back()->with('success', 'Payment recorded and receipt generated.');
+        return back()->with('success', 'Payment completed successfully.');
     }
 }

@@ -26,11 +26,24 @@
                                 <td class="px-6 py-4 text-slate-500">{{ $po->quotation->event->event_name }}</td>
                                 <td class="px-6 py-4 text-slate-500">{{ $po->quotation->supplier->name }}</td>
                                 <td class="px-6 py-4 text-slate-500">${{ number_format($payment->amount_paid, 2) }}</td>
-                                <td class="px-6 py-4"><x-status-badge :status="$payment->payment_status" /></td>
+                                <td class="px-6 py-4">
+                                    @if($payment->payment_status === 'paid')
+                                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+                                            Paid
+                                        </span>
+
+                                    @else
+
+                                        <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
+                                            Unpaid
+                                        </span>
+
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'pay-{{ $payment->id }}'}))"
                                             class="inline-flex items-center gap-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium px-3 py-1.5 hover:bg-brand-100">
-                                        {{ $payment->payment_status === 'paid' ? 'View receipt' : 'Pay Invoice' }}
+                                        {{ $payment->payment_status === 'paid' ? 'View Receipt': 'View Invoice' }}
                                     </button>
                                 </td>
                             </tr>
@@ -45,7 +58,7 @@
         @php $po = $payment->purchaseOrder; @endphp
         <x-modal :name="'pay-'.$payment->id" max-width="sm">
             <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                <h3 class="font-semibold text-slate-900">{{ $payment->payment_status === 'paid' ? 'Receipt' : 'Pay Invoice' }}</h3>
+                <h3 class="font-semibold text-slate-900">{{ $payment->payment_status === 'paid' ? 'Receipt' : 'Invoice' }}</h3>
                 <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))" class="text-slate-400 hover:text-slate-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -75,18 +88,103 @@
                 </div>
 
                 @if ($payment->payment_status === 'paid')
-                    <div class="rounded-lg bg-emerald-50 text-emerald-700 text-sm px-4 py-3 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Payment complete &middot; Receipt {{ $payment->receipt_no }}
-                    </div>
-                @else
-                    <form method="POST" action="{{ route('payments.pay', $payment) }}" class="space-y-3">
-                        @csrf
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Receipt number</label>
-                            <input type="text" name="receipt_no" required placeholder="e.g. INV-2026-0389" class="w-full rounded-lg border-slate-200 text-sm">
+
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-5 space-y-4">
+
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-emerald-700">
+                                Payment Successful
+                            </h3>
                         </div>
-                        <button type="submit" class="w-full rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium py-2.5">Mark as paid</button>
+
+                        <div class="border-t border-b py-4 space-y-3">
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Receipt No</span>
+                                <span class="font-semibold">{{ $payment->receipt_no }}</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Invoice No</span>
+                                <span class="font-medium">{{ $payment->invoice_no }}</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">PO Number</span>
+                                <span class="font-medium">{{ $po->po_number }}</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Supplier</span>
+                                <span class="font-medium">{{ $po->quotation->supplier->name }}</span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Amount Paid</span>
+                                <span class="font-bold text-brand-600">
+                                    ${{ number_format($payment->amount_paid,2) }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Paid On</span>
+                                <span>{{ $payment->paid_at?->format('M j, Y g:i A') }}</span>
+                            </div>
+
+                        </div>
+                        <p class="text-center text-slate-500 mt-1">
+                                Thank you for your payment.
+                            </p>
+
+                    </div>
+
+                    @else
+                    <form method="POST"
+                        action="{{ route('payments.pay', $payment) }}"
+                        class="space-y-4">
+
+                        @csrf
+
+                        <div class="rounded-lg border border-slate-200 p-4 space-y-3">
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Invoice No</span>
+                                <span class="font-medium">
+                                    {{ $payment->invoice_no }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">PO Number</span>
+                                <span class="font-medium">
+                                    {{ $po->po_number }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Supplier</span>
+                                <span class="font-medium">
+                                    {{ $po->quotation->supplier->name }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Amount</span>
+                                <span class="font-semibold text-brand-600">
+                                    ${{ number_format($payment->amount_paid,2) }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full rounded-lg bg-brand-500 hover:bg-brand-600 text-white py-2.5">
+
+                            Mark as Paid
+
+                        </button>
+
                     </form>
                 @endif
             </div>

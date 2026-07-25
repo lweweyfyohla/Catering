@@ -49,6 +49,11 @@
                 My Menu
             </a>
 
+            <a href="{{ route('supplier.payments.index') }}" class="rounded-lg px-3 py-2 text-sm font-medium
+               {{ request()->routeIs('supplier.payments.*') ? 'bg-brand-50 text-brand-600' : 'text-slate-500 hover:bg-slate-50' }}">
+                Payments
+            </a>
+
         </nav>
 
         <div class="flex items-center gap-4">

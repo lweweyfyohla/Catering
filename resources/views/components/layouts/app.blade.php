@@ -12,7 +12,7 @@
             ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
             ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
         ],
-        'ADMIN' => [
+        'SETTINGS' => [
             ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
         ],
     ];
@@ -77,8 +77,7 @@
                         {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                     </div>
                     <div class="min-w-0">
-                        <p class="text-sm font-medium text-slate-900 truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-xs text-slate-400 truncate">{{ auth()->user()->isAdmin() ? 'Administrator' : 'Procurement Lead' }}</p>
+                        <h3 class="font-semibold text-slate-900">{{ auth()->user()->name }}</h3>
                     </div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}" class="mt-3">

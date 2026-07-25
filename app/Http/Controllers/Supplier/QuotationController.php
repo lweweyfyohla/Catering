@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Payment;
 
 class QuotationController extends Controller
 {
@@ -42,13 +43,20 @@ class QuotationController extends Controller
         ]);
 
         if ($validated['status'] === 'accepted') {
-            PurchaseOrder::create([
+            $purchaseOrder = PurchaseOrder::create([
                 'quotation_id' => $quotation->id,
                 'po_number' => 'PO-' . now()->format('Y') . '-' . str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
                 'total_price' => $quotation->total_price,
                 'status' => 'issued',
                 'delivery_status' => 'pending',
                 'issued_at' => now(),
+            ]);
+
+            Payment::create([
+                'purchase_order_id' => $purchaseOrder->id,
+                'amount_paid'       => $purchaseOrder->total_price,
+                'payment_status'    => 'pending',
+                'invoice_no'        => 'INV-' . now()->format('Y') . '-' . str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT),
             ]);
 
             $quotation->event->update([

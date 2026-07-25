@@ -54,7 +54,7 @@
                     </td>
 
                     <td class="px-6 py-4">
-                        <x-status-badge :status="$po->payment?->status ?? 'pending'" />
+                        <x-status-badge :status="$po->payment?->payment_status ?? 'pending'" />
                     </td>
 
                     <td class="px-6 py-4 text-right">
@@ -62,8 +62,7 @@
                         @if($po->delivery_status == 'pending')
 
                             <form method="POST"
-                                  action="{{ route('supplier.dashboard.delivered', $po) }}">
-
+                                action="{{ route('supplier.dashboard.delivered', $po) }}">
                                 @csrf
                                 @method('PATCH')
 
@@ -71,12 +70,17 @@
                                     class="bg-brand-600 hover:bg-brand-700 text-white rounded-lg px-3 py-2 text-sm">
                                     Mark Delivered
                                 </button>
-
                             </form>
+
+                        @elseif($po->payment?->payment_status === 'paid')
+
+                            <span class="text-green-600 font-medium">
+                                Delivered & Paid
+                            </span>
 
                         @else
 
-                            <span class="text-green-600 font-medium">
+                            <span class="text-amber-600 font-medium">
                                 Delivered
                             </span>
 
