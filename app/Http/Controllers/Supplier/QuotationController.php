@@ -32,7 +32,9 @@ class QuotationController extends Controller
     public function updateStatus(Request $request, Quotation $quotation): RedirectResponse
     {
         abort_unless($quotation->supplier_id === Auth::user()->supplier_id, 403);
-        abort_unless($quotation->status === 'pending', 422, 'This quote request has already been resolved.');
+       if ($quotation->status !== 'pending') {
+    return back()->with('error', 'This quote request has already been resolved.');
+}
 
         $validated = $request->validate([
             'status' => ['required', 'in:accepted,rejected'],
