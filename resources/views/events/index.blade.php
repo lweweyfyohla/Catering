@@ -226,15 +226,24 @@
                 </form>
 
                 <div x-show="!editing" class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-                    <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
-                            class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">Close</button>
-                    <button type="button" @click="editing = true" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">
-                        Edit
-                    </button>
+                    <form method="POST" action="{{ route('events.destroy', $event) }}"
+          onsubmit="return confirm('Delete this event? This cannot be undone.')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="rounded-lg border border-red-200 text-red-600 text-sm font-medium px-4 py-2 hover:bg-red-50">
+            Delete
+        </button>
+                </form>
+
+                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
+            class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">Close</button>
+                <button type="button" @click="editing = true" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">
+                    Edit
+                </button>
                     <a href="{{ route('quotations.compare', $event) }}" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2">
                         Request Quote
                     </a>
-                </div>
+            </div>
             </div>
         </x-modal>
     @endforeach
