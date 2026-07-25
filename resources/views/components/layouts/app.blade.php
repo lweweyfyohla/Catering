@@ -8,9 +8,9 @@
                 ['label' => 'Users', 'route' => 'admin.users.index', 'icon' => 'users'],
                 ['label' => 'Suppliers', 'route' => 'admin.suppliers.index', 'icon' => 'building'],
             ],
-            'ADMIN' => [
-                ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
-            ],
+            'ACCOUNT' => [
+    ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
+],
         ]
         : [
             'OVERVIEW' => [
@@ -25,7 +25,7 @@
                 ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
                 ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
             ],
-            'ADMIN' => [
+            'ACCOUNT' => [
                 ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
             ],
         ];
@@ -43,7 +43,7 @@
 
     <div class="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-100 sticky top-0 z-30">
         <div class="flex items-center gap-2">
-            <div class="h-8 w-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-sm">C</div>
+            <img src="{{ asset('images/logo.png') }}" alt="CaterSource logo" class="h-8 w-8 rounded-lg object-cover">
             <span class="font-semibold text-slate-900">CaterSource</span>
         </div>
         <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg hover:bg-slate-100">
@@ -59,7 +59,7 @@
         >
             <div class="flex-1 min-h-0 overflow-y-auto">
                 <div class="hidden lg:flex items-center gap-2 px-6 py-6">
-                    <div class="h-9 w-9 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold">C</div>
+                    <img src="{{ asset('images/logo.png') }}" alt="CaterSource logo" class="h-9 w-9 rounded-lg object-cover">
                     <span class="text-lg font-semibold text-slate-900">CaterSource</span>
                 </div>
 

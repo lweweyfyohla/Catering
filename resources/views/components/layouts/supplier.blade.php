@@ -1,12 +1,14 @@
 @php
     $navGroups = [
         'SUPPLIER' => [
-    ['label' => 'Dashboard', 'route' => 'supplier.dashboard', 'icon' => 'grid'],
-    ['label' => 'Quote Requests', 'route' => 'supplier.quotations.index', 'icon' => 'document'],
-    ['label' => 'My Menu', 'route' => 'supplier.menu-items.index', 'icon' => 'cart'],
-    ['label' => 'Payments', 'route' => 'supplier.payments.index', 'icon' => 'truck'],
-    ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
-],
+            ['label' => 'Dashboard', 'route' => 'supplier.dashboard', 'icon' => 'grid'],
+            ['label' => 'Quote Requests', 'route' => 'supplier.quotations.index', 'icon' => 'document'],
+            ['label' => 'My Menu', 'route' => 'supplier.menu-items.index', 'icon' => 'cart'],
+            ['label' => 'Payments', 'route' => 'supplier.payments.index', 'icon' => 'truck'],
+        ],
+        'ACCOUNT' => [
+            ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
+        ],
     ];
 @endphp
 <!DOCTYPE html>
@@ -40,7 +42,7 @@
         >
             <div class="flex-1 min-h-0 overflow-y-auto">
                 <div class="hidden lg:flex items-center gap-2 px-6 py-6">
-                    <div class="h-9 w-9 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold">C</div>
+                    <img src="{{ asset('images/logo.png') }}" alt="CaterSource logo" class="h-9 w-9 rounded-lg object-cover">
                     <div>
                         <span class="text-lg font-semibold text-slate-900 block leading-tight">CaterSource</span>
                         <span class="text-xs text-slate-400">Supplier Portal</span>
