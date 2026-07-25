@@ -44,7 +44,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-slate-500">{{ $event->event_date->format('M j, Y') }}</td>
                                 <td class="px-6 py-4 text-slate-500">{{ $event->guest_count }}</td>
-                                <td class="px-6 py-4"><x-status-badge :status="$event->status" /></td>
+                                <td class="px-6 py-4"><x-status-badge :status="$event->resolvedStatus()" /></td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-end gap-2">
                                         <button onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'event-{{ $event->id }}'}))"
@@ -104,21 +104,9 @@
                         <input type="date" name="event_date" required class="w-full rounded-lg border-slate-200 focus:border-brand-400 focus:ring-brand-400 text-sm">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Number of guests</label>
-                        <input type="number" name="guest_count" min="1" required class="w-full rounded-lg border-slate-200 focus:border-brand-400 focus:ring-brand-400 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Event status</label>
-                        <select name="status" required class="w-full rounded-lg border-slate-200 focus:border-brand-400 focus:ring-brand-400 text-sm">
-                            <option value="draft">Draft</option>
-                            <option value="sourcing">Sourcing</option>
-                            <option value="ordered">Ordered</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="closed">Closed</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Number of guests</label>
+                    <input type="number" name="guest_count" min="1" required class="w-full rounded-lg border-slate-200 focus:border-brand-400 focus:ring-brand-400 text-sm">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Notes</label>
@@ -163,7 +151,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-slate-400">Status</p>
-                            <div class="mt-1"><x-status-badge :status="$event->status" /></div>
+                            <div class="mt-1"><x-status-badge :status="$event->resolvedStatus()" /></div>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400">Created</p>
@@ -201,19 +189,9 @@
                             <input type="date" name="event_date" value="{{ $event->event_date->format('Y-m-d') }}" required class="w-full rounded-lg border-slate-200 text-sm">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Guests</label>
-                            <input type="number" name="guest_count" value="{{ $event->guest_count }}" min="1" required class="w-full rounded-lg border-slate-200 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
-                            <select name="status" class="w-full rounded-lg border-slate-200 text-sm">
-                                @foreach (['draft','sourcing','ordered','delivered','closed'] as $s)
-                                    <option value="{{ $s }}" @selected($event->status === $s)>{{ ucfirst($s) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Guests</label>
+                        <input type="number" name="guest_count" value="{{ $event->guest_count }}" min="1" required class="w-full rounded-lg border-slate-200 text-sm">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Notes</label>

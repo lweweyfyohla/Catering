@@ -12,7 +12,7 @@ class EventController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Event::where('user_id', Auth::id());
+        $query = Event::where('user_id', Auth::id())->with('quotations.purchaseOrder.payment');
 
         if ($request->filled('status') && $request->string('status') !== 'all') {
             $query->where('status', $request->string('status'));
@@ -33,11 +33,11 @@ class EventController extends Controller
             'event_type' => ['required', 'in:wedding,corporate,social,other'],
             'event_date' => ['required', 'date'],
             'guest_count' => ['required', 'integer', 'min:1'],
-            'status' => ['required', 'in:draft,sourcing,ordered,delivered,closed'],
             'notes' => ['nullable', 'string'],
         ]);
 
         $validated['user_id'] = Auth::id();
+        $validated['status'] = 'draft';
         $validated['notes'] = $validated['notes'] ?: 'No additional notes provided.';
 
         Event::create($validated);
@@ -54,7 +54,6 @@ class EventController extends Controller
             'event_type' => ['required', 'in:wedding,corporate,social,other'],
             'event_date' => ['required', 'date'],
             'guest_count' => ['required', 'integer', 'min:1'],
-            'status' => ['required', 'in:draft,sourcing,ordered,delivered,closed'],
             'notes' => ['nullable', 'string'],
         ]);
 
