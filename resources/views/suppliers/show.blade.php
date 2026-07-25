@@ -6,17 +6,30 @@
     </a>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-6">
-        <div class="h-32 bg-gradient-to-br from-brand-200 to-brand-50"></div>
-        <div class="px-6 py-5 flex items-center justify-between">
+    <div class="h-32 bg-gradient-to-br from-brand-200 to-brand-50 overflow-hidden">
+        @if ($supplier->image_cover)
+            <img src="{{ asset('storage/'.$supplier->image_cover) }}" class="h-full w-full object-cover" alt="{{ $supplier->name }} cover">
+        @endif
+    </div>
+    <div class="px-6 py-5 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <div class="h-14 w-14 -mt-10 rounded-xl ring-4 ring-white bg-brand-50 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
+                @if ($supplier->logo)
+                    <img src="{{ asset('storage/'.$supplier->logo) }}" class="h-full w-full object-cover" alt="{{ $supplier->name }} logo">
+                @else
+                    <span class="text-lg font-bold text-brand-500">{{ strtoupper(substr($supplier->name, 0, 2)) }}</span>
+                @endif
+            </div>
             <div>
                 <h2 class="text-lg font-bold text-slate-900">{{ $supplier->name }}</h2>
                 <p class="text-sm text-slate-400">{{ ucfirst($supplier->category) }} &middot; {{ $supplier->address ?? 'No address' }} &middot; ★ {{ number_format($supplier->stars, 1) }}</p>
             </div>
-            <a href="{{ route('cart.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2.5">
-                View Cart
-            </a>
         </div>
+        <a href="{{ route('cart.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2.5">
+            View Cart
+        </a>
     </div>
+</div>
 
     @if ($events->isEmpty())
         <div class="mb-6 rounded-lg bg-amber-50 border border-amber-100 text-amber-700 text-sm px-4 py-3">

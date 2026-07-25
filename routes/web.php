@@ -102,7 +102,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
-    Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
 });
 
 // ---------------- ADMIN ----------------

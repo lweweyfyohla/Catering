@@ -37,9 +37,13 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach ($suppliers as $supplier)
                 <a href="{{ route('suppliers.show', $supplier) }}" class="block bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition">
-                    <div class="h-28 bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-brand-500">{{ strtoupper(substr($supplier->name, 0, 2)) }}</span>
-                    </div>
+                    <div class="h-20 bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center overflow-hidden">
+    @if ($supplier->logo)
+        <img src="{{ asset('storage/'.$supplier->logo) }}" class="h-full w-full object-cover" alt="{{ $supplier->name }} logo">
+    @else
+        <span class="text-2xl font-bold text-brand-500">{{ strtoupper(substr($supplier->name, 0, 2)) }}</span>
+    @endif
+</div>
                     <div class="p-5">
                         <div class="flex items-center justify-between">
                             <h3 class="font-semibold text-slate-900">{{ $supplier->name }}</h3>
