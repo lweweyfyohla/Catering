@@ -4,7 +4,6 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
-use App\Http\Controllers\Supplier\PaymentController as SupplierPaymentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
@@ -20,7 +19,15 @@ use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/', function () {
+    if (auth()->check()) {
+        auth()->guard('web')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+    }
+
+    return redirect()->route('login');
+});
 
 // Single login for all three roles
 Route::middleware('guest')->group(function () {
@@ -101,8 +108,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
 });
 
-// ---------------- Shared (user + admin) ----------------
-Route::middleware(['auth', 'role:user,admin'])->group(function () {
+// ---------------- Shared (user + admin + supplier) ----------------
+Route::middleware(['auth', 'role:user,admin,supplier'])->group(function () {
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
 });

@@ -1,21 +1,34 @@
 @php
-    $navGroups = [
-        'OVERVIEW' => [
-            ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'grid'],
-        ],
-        'OPERATIONS' => [
-            ['label' => 'Events', 'route' => 'events.index', 'icon' => 'calendar'],
-            ['label' => 'Suppliers', 'route' => 'suppliers.index', 'icon' => 'building'],
-            ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'document'],
-        ],
-        'PROCUREMENT' => [
-            ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
-            ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
-        ],
-        'ADMIN' => [
-            ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
-        ],
-    ];
+    $navGroups = auth()->user()->isAdmin()
+        ? [
+            'OVERVIEW' => [
+                ['label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'grid'],
+            ],
+            'MANAGE' => [
+                ['label' => 'Users', 'route' => 'admin.users.index', 'icon' => 'users'],
+                ['label' => 'Suppliers', 'route' => 'admin.suppliers.index', 'icon' => 'building'],
+            ],
+            'ADMIN' => [
+                ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
+            ],
+        ]
+        : [
+            'OVERVIEW' => [
+                ['label' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'grid'],
+            ],
+            'OPERATIONS' => [
+                ['label' => 'Events', 'route' => 'events.index', 'icon' => 'calendar'],
+                ['label' => 'Suppliers', 'route' => 'suppliers.index', 'icon' => 'building'],
+                ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'document'],
+            ],
+            'PROCUREMENT' => [
+                ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
+                ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
+            ],
+            'ADMIN' => [
+                ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
+            ],
+        ];
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -73,9 +86,13 @@
 
             <div class="shrink-0 px-4 py-5 border-t border-slate-100">
                 <div class="flex items-center gap-3 px-2">
-                    <div class="h-9 w-9 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-semibold text-sm">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-                    </div>
+                    <div class="h-9 w-9 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-semibold text-sm overflow-hidden">
+    @if (auth()->user()->avatar)
+        <img src="{{ asset('storage/'.auth()->user()->avatar) }}" class="h-full w-full object-cover" alt="{{ auth()->user()->name }}">
+    @else
+        {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+    @endif
+</div>
                     <div class="min-w-0">
                         <h3 class="font-semibold text-slate-900">{{ auth()->user()->name }}</h3>
                     </div>
@@ -99,9 +116,13 @@
                     <p class="text-sm text-slate-400">{{ $pageSubtitle ?? now()->format('l, F j, Y') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div class="h-9 w-9 rounded-full bg-brand-500 text-white flex items-center justify-center font-semibold text-sm">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-                    </div>
+                    <div class="h-9 w-9 rounded-full bg-brand-500 text-white flex items-center justify-center font-semibold text-sm overflow-hidden">
+    @if (auth()->user()->avatar)
+        <img src="{{ asset('storage/'.auth()->user()->avatar) }}" class="h-full w-full object-cover" alt="{{ auth()->user()->name }}">
+    @else
+        {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+    @endif
+</div>
                     <span class="text-sm font-medium text-slate-700">{{ auth()->user()->name }}</span>
                 </div>
             </header>

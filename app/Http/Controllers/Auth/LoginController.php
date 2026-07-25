@@ -12,9 +12,15 @@ use Illuminate\View\View;
 class LoginController extends Controller
 {
     public function create(): View
-    {
-        return view('auth.login');
+{
+    if (Auth::check()) {
+        Auth::guard('web')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
     }
+
+    return view('auth.login');
+}
 
     public function store(Request $request): RedirectResponse
     {
