@@ -6,14 +6,14 @@
     </a>
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-6">
-    <div class="h-32 bg-gradient-to-br from-brand-200 to-brand-50 overflow-hidden">
-        @if ($supplier->image_cover)
-            <img src="{{ asset('storage/'.$supplier->image_cover) }}" class="h-full w-full object-cover" alt="{{ $supplier->name }} cover">
-        @endif
-    </div>
+    <div class="h-40 md:h-48 bg-gradient-to-br from-brand-100 to-brand-100 overflow-hidden">
+    @if ($supplier->image_cover)
+        <img src="{{ asset('storage/'.$supplier->image_cover) }}" class="h-full w-full object-cover object-center" alt="{{ $supplier->name }} cover">
+    @endif
+</div>
     <div class="px-6 py-5 flex items-center justify-between">
         <div class="flex items-center gap-4">
-            <div class="h-14 w-14 -mt-10 rounded-xl ring-4 ring-white bg-brand-50 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
+            <div class="h-9 w-9 -mt-4 rounded-lg ring-4 ring-white bg-brand-50 shadow-sm overflow-hidden flex items-center justify-center shrink-0">
                 @if ($supplier->logo)
                     <img src="{{ asset('storage/'.$supplier->logo) }}" class="h-full w-full object-cover" alt="{{ $supplier->name }} logo">
                 @else
