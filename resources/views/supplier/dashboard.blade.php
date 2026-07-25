@@ -54,7 +54,7 @@
                     </td>
 
                     <td class="px-6 py-4">
-                        <x-status-badge :status="$po->payment?->payment_status ?? 'pending'" />
+                        <x-status-badge :status="$po->payment?->payment_status ?? 'unpaid'" />
                     </td>
 
                     <td class="px-6 py-4 text-right">
