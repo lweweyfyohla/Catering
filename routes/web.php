@@ -1,10 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
-use App\Http\Controllers\Admin\PurchaseOrderController as AdminPurchaseOrderController;
-use App\Http\Controllers\Admin\QuotationController as AdminQuotationController;
-use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
 use App\Http\Controllers\Supplier\PaymentController as SupplierPaymentController;
@@ -108,5 +105,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:user,admin'])->group(function () {
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
-    Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
+});
+
+// ---------------- ADMIN ----------------
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Manage Users: view + delete customer accounts (no edit needed)
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+    // Manage Suppliers: admin creates supplier accounts, but never touches menu items
+    Route::get('/suppliers', [AdminSupplierController::class, 'index'])->name('suppliers.index');
+    Route::post('/suppliers', [AdminSupplierController::class, 'store'])->name('suppliers.store');
+    Route::put('/suppliers/{supplier}', [AdminSupplierController::class, 'update'])->name('suppliers.update');
+    Route::delete('/suppliers/{supplier}', [AdminSupplierController::class, 'destroy'])->name('suppliers.destroy');
 });

@@ -29,16 +29,4 @@ class SettingsController extends Controller
 
         return back()->with('success', 'Profile updated.');
     }
-
-    public function updatePassword(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
-
-        Auth::user()->update(['password' => Hash::make($validated['password'])]);
-
-        return back()->with('success', 'Password updated.');
-    }
 }

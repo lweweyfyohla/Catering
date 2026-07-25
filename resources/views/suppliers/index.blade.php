@@ -10,18 +10,25 @@
         </div>
     </div>
 
-    <form method="GET" class="flex flex-wrap gap-3 mb-6">
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search suppliers..."
-               class="rounded-lg border-slate-200 text-sm w-64 focus:border-brand-400 focus:ring-brand-400">
-        <select name="category" onchange="this.form.submit()" class="rounded-lg border-slate-200 text-sm focus:border-brand-400 focus:ring-brand-400">
-            <option value="all">All categories</option>
-            @foreach (['catering','beverage','dessert','other'] as $c)
-                <option value="{{ $c }}" @selected(request('category') === $c)>{{ ucfirst($c) }}</option>
-            @endforeach
-        </select>
-        <button class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">Filter</button>
-    </form>
+    <form method="GET" class="flex flex-wrap items-center gap-3 mb-6">
+        <div class="relative">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search suppliers..."
+                   onchange="this.form.submit()"
+                   class="rounded-lg border border-slate-300 text-sm w-64 pl-9 pr-3 py-2.5 focus:border-brand-400 focus:ring-brand-400 focus:ring-1">
+        </div>
 
+        <div class="relative">
+            <select name="category" onchange="this.form.submit()"
+                    class="appearance-none rounded-lg border border-slate-300 text-sm font-medium text-slate-700 pl-3 pr-9 py-2.5 bg-white hover:border-slate-400 focus:border-brand-400 focus:ring-brand-400 focus:ring-1 cursor-pointer">
+                <option value="all">All categories</option>
+                @foreach (['catering','beverage','dessert','other'] as $c)
+                    <option value="{{ $c }}" @selected(request('category') === $c)>{{ ucfirst($c) }}</option>
+                @endforeach
+            </select>
+            <svg class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+    </form>
     @if ($suppliers->isEmpty())
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm px-6 py-12 text-center text-sm text-slate-400">
             No suppliers found yet.
@@ -30,9 +37,13 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach ($suppliers as $supplier)
                 <a href="{{ route('suppliers.show', $supplier) }}" class="block bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition">
-                    <div class="h-28 bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-brand-500">{{ strtoupper(substr($supplier->name, 0, 2)) }}</span>
-                    </div>
+                    <div class="h-20 bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center overflow-hidden">
+    @if ($supplier->logo)
+        <img src="{{ asset('storage/'.$supplier->logo) }}" class="h-full w-full object-cover" alt="{{ $supplier->name }} logo">
+    @else
+        <span class="text-2xl font-bold text-brand-500">{{ strtoupper(substr($supplier->name, 0, 2)) }}</span>
+    @endif
+</div>
                     <div class="p-5">
                         <div class="flex items-center justify-between">
                             <h3 class="font-semibold text-slate-900">{{ $supplier->name }}</h3>
