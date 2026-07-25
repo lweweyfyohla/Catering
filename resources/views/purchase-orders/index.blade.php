@@ -1,4 +1,5 @@
-<x-layouts.app title="Purchase Orders - CaterSource" page-title="Purchase Orders" :page-subtitle="now()->format('l, F j, Y')">
+<x-layouts.app title="Purchase Orders - CaterSource" page-title="Purchase Orders"
+    :page-subtitle="now()->format('l, F j, Y')">
 
     <p class="text-sm text-slate-500 mb-6">
         Track your purchase orders and confirm delivery once your order arrives.
@@ -62,18 +63,10 @@
                                             onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'po-{{ $po->id }}'}))"
                                             class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50">
 
-                                            <svg class="w-4 h-4"
-                                                 fill="none"
-                                                 stroke="currentColor"
-                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round"
-                                                      stroke-linejoin="round"
-                                                      stroke-width="2"
-                                                      d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"/>
-                                                <circle cx="12"
-                                                        cy="12"
-                                                        r="3"
-                                                        stroke-width="2"/>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z" />
+                                                <circle cx="12" cy="12" r="3" stroke-width="2" />
                                             </svg>
 
                                         </button>
@@ -97,7 +90,7 @@
 
     @foreach ($purchaseOrders as $po)
 
-        <x-modal :name="'po-'.$po->id" max-width="md">
+        <x-modal :name="'po-' . $po->id" max-width="md">
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
 
@@ -105,20 +98,12 @@
                     {{ $po->po_number }}
                 </h3>
 
-                <button
-                    type="button"
-                    onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
+                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
                     class="text-slate-400 hover:text-slate-600">
 
-                    <svg class="w-5 h-5"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
-                        <path stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 
                     </svg>
 
@@ -170,75 +155,37 @@
 
                 @if ($po->delivery_status === 'completed')
 
-                        <div class="w-full rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-center py-2 text-sm font-medium">
-                            ✓ Delivery Confirmed
-                        </div>
-
-                    @elseif ($po->delivery_status === 'delivered')
-
-                        <form method="POST"
-                            action="{{ route('purchase-orders.confirm-delivery', $po) }}">
-                            @csrf
-
-                            <button
-                                type="submit"
-                                class="w-full rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium py-2">
-                                Confirm Delivery
-                            </button>
-                        </form>
-
-                    @else
-
-                        <div class="w-full rounded-lg bg-slate-100 text-slate-500 text-center py-2 text-sm">
-                            Waiting for supplier to deliver
-                        </div>
-
-                    @endif
-
-                <form method="POST"
-                      action="{{ route('purchase-orders.upload-invoice', $po) }}"
-                      enctype="multipart/form-data"
-                      class="pt-2 border-t border-slate-100">
-
-                    @csrf
-
-                    <p class="text-xs font-medium text-slate-500 mb-2">
-                        Upload invoice
-                    </p>
-
-                    <div class="flex gap-2">
-
-                        <input
-                            type="text"
-                            name="invoice_no"
-                            placeholder="Invoice number"
-                            required
-                            class="flex-1 rounded-lg border-slate-200 text-sm">
-
-                        <input
-                            type="file"
-                            name="invoice_file"
-                            class="flex-1 text-xs">
-
+                    <div
+                        class="w-full rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-center py-2 text-sm font-medium">
+                        ✓ Delivery Confirmed
                     </div>
 
-                    <button
-                        type="submit"
-                        class="mt-2 w-full rounded-lg border border-slate-200 text-slate-600 text-sm font-medium py-2 hover:bg-slate-50">
+                @elseif ($po->delivery_status === 'delivered')
 
-                        Save Invoice
+                    <form method="POST" action="{{ route('purchase-orders.confirm-delivery', $po) }}">
+                        @csrf
 
-                    </button>
+                        <button type="submit"
+                            class="w-full rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium py-2">
+                            Confirm Delivery
+                        </button>
+                    </form>
 
-                </form>
+                @else
+
+                    <div class="w-full rounded-lg bg-slate-100 text-slate-500 text-center py-2 text-sm">
+                        Waiting for supplier to deliver
+                    </div>
+
+                @endif
+
+
 
             </div>
 
             <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
 
-                <button
-                    type="button"
-                    onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
+                <button type="button" onclick="window.dispatchEvent(new CustomEvent('close-modal'))"
                     class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">
 
                     Close

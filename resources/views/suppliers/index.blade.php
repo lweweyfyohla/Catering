@@ -3,32 +3,14 @@
     <div class="flex items-center justify-between mb-6">
         <p class="text-sm text-slate-500">Browse suppliers and their menus</p>
         <div class="flex items-center gap-3">
-            <a href="{{ route('cart.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-brand-50 text-brand-600 text-sm font-medium px-4 py-2.5 hover:bg-brand-100">
+            <a href="{{ route('cart.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2.5 transition">
                 <x-nav-icon name="cart" />
                 View Cart
             </a>
         </div>
     </div>
 
-    <form method="GET" class="flex flex-wrap items-center gap-3 mb-6">
-        <div class="relative">
-            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search suppliers..."
-                   onchange="this.form.submit()"
-                   class="rounded-lg border border-slate-300 text-sm w-64 pl-9 pr-3 py-2.5 focus:border-brand-400 focus:ring-brand-400 focus:ring-1">
-        </div>
 
-        <div class="relative">
-            <select name="category" onchange="this.form.submit()"
-                    class="appearance-none rounded-lg border border-slate-300 text-sm font-medium text-slate-700 pl-3 pr-9 py-2.5 bg-white hover:border-slate-400 focus:border-brand-400 focus:ring-brand-400 focus:ring-1 cursor-pointer">
-                <option value="all">All categories</option>
-                @foreach (['catering','beverage','dessert','other'] as $c)
-                    <option value="{{ $c }}" @selected(request('category') === $c)>{{ ucfirst($c) }}</option>
-                @endforeach
-            </select>
-            <svg class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </div>
-    </form>
     @if ($suppliers->isEmpty())
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm px-6 py-12 text-center text-sm text-slate-400">
             No suppliers found yet.
