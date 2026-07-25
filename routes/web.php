@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SupplierController as AdminSupplierController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Supplier\DashboardController as SupplierDashboardController;
+use App\Http\Controllers\Supplier\PaymentController as SupplierPaymentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
@@ -85,7 +86,7 @@ Route::middleware(['auth', 'role:supplier'])->prefix('supplier')->name('supplier
     Route::put('/menu-items/{menuItem}', [MenuItemController::class, 'update'])->name('menu-items.update');
     Route::delete('/menu-items/{menuItem}', [MenuItemController::class, 'destroy'])->name('menu-items.destroy');
     Route::get('/menu-items', [MenuItemController::class, 'index']) ->name('menu-items.index');
-    Route::get('/payments', [SupplierPaymentController::class, 'index']) ->name('payments.index');
+    Route::get('/payments', [SupplierPaymentController::class, 'index'])->name('payments.index');
 });
 
 // ---------------- ADMIN ----------------
