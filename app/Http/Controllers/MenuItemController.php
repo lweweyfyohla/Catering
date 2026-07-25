@@ -36,9 +36,18 @@ class MenuItemController extends Controller
             $validated['image'] = $request->file('image')->store('menu-items', 'public');
         }
 
-        $supplier->menuItems()->create($validated);
+       $menuItem = $supplier->menuItems()
+    ->where('item_name', $validated['item_name'])
+    ->first();
 
-        return back()->with('success', 'Menu item added.');
+if ($menuItem) {
+    $menuItem->update($validated);
+    return back()->with('success', 'Menu item already existed — updated instead of duplicating.');
+}
+
+$supplier->menuItems()->create($validated);
+
+return back()->with('success', 'Menu item added.');
     }
 
     public function update(Request $request, MenuItem $menuItem): RedirectResponse
