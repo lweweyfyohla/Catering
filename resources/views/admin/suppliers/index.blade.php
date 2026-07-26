@@ -11,22 +11,6 @@
         </button>
     </div>
 
-    <form method="GET" class="flex flex-wrap gap-3 mb-6">
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search suppliers..."
-               class="rounded-lg border-slate-200 text-sm w-64 focus:border-brand-400 focus:ring-brand-400">
-
-        <button class="rounded-lg border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2 hover:bg-slate-50">
-            Search
-        </button>
-
-        @if (request('search'))
-            <a href="{{ route('admin.suppliers.index') }}"
-               class="rounded-lg text-slate-400 text-sm font-medium px-4 py-2 hover:text-slate-600">
-                Clear
-            </a>
-        @endif
-    </form>
-
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
 
         @if ($suppliers->isEmpty())
