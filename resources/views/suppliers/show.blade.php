@@ -60,7 +60,7 @@
             @foreach ($supplier->menuItems as $item)
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                     <div class="h-3 bg-brand-500"></div>
-                    <div class="h-32 bg-slate-50 flex items-center justify-center">
+                    <div class="aspect-square bg-slate-50 flex items-center justify-center">
                         @if ($item->image)
                             <img src="{{ asset('storage/'.$item->image) }}" class="h-full w-full object-cover" alt="{{ $item->item_name }}">
                         @else
@@ -87,7 +87,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
-                        <div class="h-40 bg-slate-50 flex items-center justify-center">
+                        <div class="aspect-square bg-slate-50 flex items-center justify-center">
                             @if ($item->image)
                                 <img src="{{ asset('storage/'.$item->image) }}" class="h-full w-full object-cover" alt="">
                             @else
