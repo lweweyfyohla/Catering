@@ -17,28 +17,33 @@ class SupplierController extends Controller
     {
         $query = Supplier::query();
 
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->string('search').'%');
-        }
-
         if ($request->filled('category') && $request->string('category') !== 'all') {
             $query->where('category', $request->string('category'));
         }
 
         $suppliers = $query->withCount('menuItems')->orderBy('name')->get();
 
-        return view('suppliers.index', compact('suppliers'));
+        if ($request->filled('event_id')) {
+            session(['sourcing_event_id' => $request->integer('event_id')]);
+        }
+
+        $events = Event::where('user_id', Auth::id())->whereNotIn('status', ['closed'])->orderByDesc('event_date')->get();
+        $selectedEvent = $events->firstWhere('id', session('sourcing_event_id'));
+
+        return view('suppliers.index', compact('suppliers', 'events', 'selectedEvent'));
     }
 
-    public function show(Supplier $supplier): View
+    public function show(Request $request, Supplier $supplier): View
     {
         $supplier->load('menuItems');
 
-        $events = Event::where('user_id', Auth::id())
-            ->whereNotIn('status', ['closed'])
-            ->orderByDesc('event_date')
-            ->get();
+        if ($request->filled('event_id')) {
+            session(['sourcing_event_id' => $request->integer('event_id')]);
+        }
 
-        return view('suppliers.show', compact('supplier', 'events'));
+        $events = Event::where('user_id', Auth::id())->whereNotIn('status', ['closed'])->orderByDesc('event_date')->get();
+        $selectedEvent = $events->firstWhere('id', session('sourcing_event_id'));
+
+        return view('suppliers.show', compact('supplier', 'events', 'selectedEvent'));
     }
 }

@@ -77,7 +77,8 @@ class EventController extends Controller
 
         $event->update(['status' => 'sourcing']);
 
-        return back()->with('success', 'Sourcing started for '.$event->event_name);
+        return redirect()->route('suppliers.index', ['event_id' => $event->id])
+            ->with('success', 'Sourcing started for ' . $event->event_name);
     }
 
     private function authorizeOwner(Event $event): void
