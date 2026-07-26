@@ -22,8 +22,8 @@
                 ['label' => 'Quotations', 'route' => 'quotations.index', 'icon' => 'document'],
             ],
             'PROCUREMENT' => [
-                ['label' => 'Purchase Orders', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
-                ['label' => 'Delivery & Payment', 'route' => 'payments.index', 'icon' => 'truck'],
+                ['label' => 'Purchase Orders & Delivery', 'route' => 'purchase-orders.index', 'icon' => 'cart'],
+                ['label' => 'Payments', 'route' => 'payments.index', 'icon' => 'truck'],
             ],
             'ACCOUNT' => [
                 ['label' => 'Settings', 'route' => 'settings.edit', 'icon' => 'cog'],
