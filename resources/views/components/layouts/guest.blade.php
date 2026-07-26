@@ -10,7 +10,7 @@
     <div class="min-h-screen flex flex-col lg:flex-row items-center justify-center gap-10 px-6 py-10 lg:px-16">
         <div class="hidden lg:flex flex-col max-w-sm">
             <div class="flex items-center gap-2 mb-8">
-                <div class="h-9 w-9 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold">C</div>
+                <img src="{{ asset('images/logo.png') }}" alt="CaterSource logo" class="h-9 w-9 rounded-lg object-cover">
                 <span class="text-lg font-semibold text-slate-900">CaterSource</span>
             </div>
             <h1 class="text-3xl font-bold text-slate-900 leading-tight">
