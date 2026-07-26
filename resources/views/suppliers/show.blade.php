@@ -56,23 +56,23 @@
             This supplier hasn't added any menu items yet.
         </div>
     @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             @foreach ($supplier->menuItems as $item)
-                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                    <div class="h-3 bg-brand-500"></div>
-                    <div class="aspect-square bg-slate-50 flex items-center justify-center">
+                <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
+                    <div class="h-2 bg-brand-500 shrink-0"></div>
+                    <div class="aspect-square bg-slate-50 flex items-center justify-center shrink-0">
                         @if ($item->image)
                             <img src="{{ asset('storage/'.$item->image) }}" class="h-full w-full object-cover" alt="{{ $item->item_name }}">
                         @else
-                            <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 6h16v12H4V6z"/></svg>
+                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 6h16v12H4V6z"/></svg>
                         @endif
                     </div>
-                    <div class="p-4">
-                        <h4 class="font-semibold text-slate-900">{{ $item->item_name }}</h4>
-                        <p class="text-brand-600 font-bold text-sm mt-0.5">${{ number_format($item->price, 2) }}</p>
-                        <p class="text-xs text-slate-400 mt-1 line-clamp-2">{{ $item->description }}</p>
+                    <div class="p-3 flex flex-col flex-1">
+                        <h4 class="font-semibold text-slate-900 text-sm leading-tight truncate">{{ $item->item_name }}</h4>
+                        <p class="text-brand-600 font-bold text-xs leading-tight mt-1">${{ number_format($item->price, 2) }}</p>
+                        <p class="text-xs text-slate-400 leading-snug mt-1 line-clamp-2 min-h-[2rem]">{{ $item->description }}</p>
                         <button @if($selectedEvent) onclick="window.dispatchEvent(new CustomEvent('open-modal', {detail: 'item-{{ $item->id }}'}))" @else disabled @endif
-                                class="mt-3 w-full rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium py-2 transition">
+                                class="mt-2 w-full rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-medium py-1.5 transition">
                             + Add to Cart
                         </button>
                     </div>
