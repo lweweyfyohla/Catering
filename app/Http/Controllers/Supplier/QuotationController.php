@@ -21,10 +21,10 @@ class QuotationController extends Controller
             'event.user',
             'cartItems.menuItem'
         ])
-        ->where('supplier_id', $supplierId)
-        ->where('status', 'pending')
-        ->latest('sent_at')
-        ->get();
+            ->where('supplier_id', $supplierId)
+            ->where('status', 'pending')
+            ->latest('sent_at')
+            ->get();
 
         return view('supplier.quotations.index', compact('quotations'));
     }
@@ -32,9 +32,9 @@ class QuotationController extends Controller
     public function updateStatus(Request $request, Quotation $quotation): RedirectResponse
     {
         abort_unless($quotation->supplier_id === Auth::user()->supplier_id, 403);
-       if ($quotation->status !== 'pending') {
-    return back()->with('error', 'This quote request has already been resolved.');
-}
+        if ($quotation->status !== 'pending') {
+            return back()->with('error', 'This quote request has already been resolved.');
+        }
 
         $validated = $request->validate([
             'status' => ['required', 'in:accepted,rejected'],
@@ -53,12 +53,11 @@ class QuotationController extends Controller
                 'delivery_status' => 'pending',
                 'issued_at' => now(),
             ]);
-
+            
             Payment::create([
                 'purchase_order_id' => $purchaseOrder->id,
-                'amount_paid'       => $purchaseOrder->total_price,
-                'payment_status'    => 'pending',
-                'invoice_no'        => 'INV-' . now()->format('Y') . '-' . str_pad($purchaseOrder->id, 4, '0', STR_PAD_LEFT),
+                'amount_paid' => $purchaseOrder->total_price,
+                'payment_status' => 'pending',
             ]);
 
             $quotation->event->update([
