@@ -73,7 +73,7 @@ class PurchaseOrderController extends Controller
 
         $purchaseOrder->payment()->firstOrCreate([], [
             'amount_paid' => $purchaseOrder->total_price,
-            'payment_status' => 'pending',
+            'payment_status' => 'unpaid',
         ]);
 
         return back()->with('success', 'Invoice details saved.');

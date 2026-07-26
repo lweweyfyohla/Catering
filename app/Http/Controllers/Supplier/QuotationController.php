@@ -57,7 +57,7 @@ class QuotationController extends Controller
             Payment::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'amount_paid' => $purchaseOrder->total_price,
-                'payment_status' => 'pending',
+                'payment_status' => 'unpaid',
             ]);
 
             $quotation->event->update([
