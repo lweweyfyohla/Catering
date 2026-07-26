@@ -38,16 +38,17 @@ class SupplierController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:150'],
-            'category' => ['required', 'in:catering,beverage,dessert,other'],
-            'contact_email' => ['required', 'email', 'max:150', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'notes' => ['nullable', 'string'],
-            'logo' => ['nullable', 'image', 'max:2048'],
-            'image_cover' => ['nullable', 'image', 'max:4096'],
-            'password' => ['required', 'string', 'min:8'],
-        ]);
+        'name' => ['required', 'string', 'max:150'],
+        'category' => ['required', 'in:catering,beverage,dessert,other'],
+        'contact_email' => ['required', 'email', 'max:150', 'unique:users,email'],
+        'phone' => ['nullable', 'string', 'max:30'],
+        'address' => ['nullable', 'string', 'max:255'],
+        'notes' => ['nullable', 'string'],
+        'logo' => ['nullable', 'image', 'max:2048'],
+        'image_cover' => ['nullable', 'image', 'max:4096'],
+        'stars' => ['nullable', 'integer', 'min:0', 'max:5'],
+        'password' => ['required', 'string', 'min:8'],
+    ]);
 
         if ($request->hasFile('logo')) {
             $validated['logo'] = $request->file('logo')->store('suppliers/logos', 'public');
@@ -58,7 +59,7 @@ class SupplierController extends Controller
         }
 
         $validated['registered_at'] = now();
-        $validated['stars'] = 5;
+        $validated['stars'] = $validated['stars'] ?? 5;
 
         $supplierAttributes = collect($validated)->except('password')->toArray();
 
@@ -82,16 +83,17 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:150'],
-            'category' => ['required', 'in:catering,beverage,dessert,other'],
-            'contact_email' => [
-                'nullable', 'email', 'max:150',
-                Rule::unique('users', 'email')->ignore($supplier->user?->id),
-            ],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'notes' => ['nullable', 'string'],
-        ]);
+        'name' => ['required', 'string', 'max:150'],
+        'category' => ['required', 'in:catering,beverage,dessert,other'],
+        'contact_email' => [
+            'nullable', 'email', 'max:150',
+            Rule::unique('users', 'email')->ignore($supplier->user?->id),
+        ],
+        'phone' => ['nullable', 'string', 'max:30'],
+        'address' => ['nullable', 'string', 'max:255'],
+        'notes' => ['nullable', 'string'],
+        'stars' => ['nullable', 'integer', 'min:0', 'max:5'],
+    ]);
 
         $supplier->update($validated);
 
