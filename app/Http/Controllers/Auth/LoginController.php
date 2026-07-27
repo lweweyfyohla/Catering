@@ -12,15 +12,15 @@ use Illuminate\View\View;
 class LoginController extends Controller
 {
     public function create(): View
-{
-    if (Auth::check()) {
-        Auth::guard('web')->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-    }
+    {
+        if (Auth::check()) {
+            Auth::guard('web')->logout();
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+        }
 
-    return view('auth.login');
-}
+        return view('auth.login');
+    }
 
     public function store(Request $request): RedirectResponse
     {
@@ -29,7 +29,7 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => 'These credentials do not match our records.',
             ])->onlyInput('email');
@@ -37,7 +37,9 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended($this->redirectPathFor(Auth::user()));
+        $request->session()->forget('url.intended');
+
+        return redirect()->to($this->redirectPathFor(Auth::user()));
     }
 
     public function destroy(Request $request): RedirectResponse

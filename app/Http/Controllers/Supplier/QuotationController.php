@@ -23,6 +23,9 @@ class QuotationController extends Controller
         ])
             ->where('supplier_id', $supplierId)
             ->where('status', 'pending')
+            // Defensive: if a quotation's event was ever deleted without the
+            // cascade firing (orphaned row), don't let it crash this page.
+            ->whereHas('event')
             ->latest('sent_at')
             ->get();
 
@@ -53,7 +56,7 @@ class QuotationController extends Controller
                 'delivery_status' => 'pending',
                 'issued_at' => now(),
             ]);
-            
+
             Payment::create([
                 'purchase_order_id' => $purchaseOrder->id,
                 'amount_paid' => $purchaseOrder->total_price,
