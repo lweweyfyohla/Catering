@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-           SupplierSeeder::class,
-           // MenuItemSeeder::class, once you make one the same way
-       ]);
-       
+       SupplierSeeder::class,
+       MenuItemSeeder::class,
+   ]);
+
         $user = User::create([
             'name' => 'Sarah Chen',
             'email' => 'sokha@gmail.com',
