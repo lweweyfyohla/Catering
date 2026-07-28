@@ -73,6 +73,7 @@ class SupplierSeeder extends Seeder
             [
                 'name' => 'Num Slerktoey',
                 'contact_email' => 'numslerktoey@gmail.com',
+                
                 'phone' => '0123456789',
                 'category' => 'dessert',
                 'notes' => null,

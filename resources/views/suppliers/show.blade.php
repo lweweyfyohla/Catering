@@ -60,15 +60,13 @@
             @foreach ($supplier->menuItems as $item)
                 <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
                     <div class="h-2 bg-brand-500 shrink-0"></div>
-                    <div class="relative w-full pt-[100%] bg-slate-50 shrink-0">
-    <div class="absolute inset-0 flex items-center justify-center">
-        @if ($item->image)
-            <img src="{{ asset('storage/'.$item->image) }}" class="h-full w-full object-cover" alt="{{ $item->item_name }}">
-        @else
-            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 6h16v12H4V6z"/></svg>
-        @endif
-    </div>
-</div>
+                    <div class="aspect-square bg-slate-50 flex items-center justify-center shrink-0">
+                        @if ($item->image)
+                            <img src="{{ asset('storage/'.$item->image) }}" class="h-full w-full object-cover" alt="{{ $item->item_name }}">
+                        @else
+                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 6h16v12H4V6z"/></svg>
+                        @endif
+                    </div>
                     <div class="p-3 flex flex-col flex-1">
                         <h4 class="font-semibold text-slate-900 text-sm leading-tight truncate">{{ $item->item_name }}</h4>
                         <p class="text-brand-600 font-bold text-xs leading-tight mt-1">${{ number_format($item->price, 2) }}</p>
