@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\PurchaseOrder;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -12,10 +11,14 @@ class PurchaseOrderController extends Controller
 {
     public function index(): View
     {
-        $purchaseOrders = PurchaseOrder::with(['quotation.event', 'quotation.supplier'])
-            ->whereHas('quotation.event', fn ($q) => $q->where('user_id', Auth::id()))
-            ->latest('issued_at')
-            ->get();
+        $purchaseOrders = PurchaseOrder::with([
+            'quotation.event',
+            'quotation.supplier',
+            'payment'
+        ])
+        ->whereHas('quotation.event', fn ($q) => $q->where('user_id', Auth::id()))
+        ->latest('issued_at')
+        ->get();
 
         return view('purchase-orders.index', compact('purchaseOrders'));
     }
@@ -24,7 +27,9 @@ class PurchaseOrderController extends Controller
     {
         $this->authorizeOwner($purchaseOrder);
 
-        $purchaseOrder->update(['status' => 'confirmed']);
+        $purchaseOrder->update([
+            'status' => 'confirmed',
+        ]);
 
         return back()->with('success', 'Purchase order confirmed.');
     }
@@ -33,19 +38,22 @@ class PurchaseOrderController extends Controller
     {
         $this->authorizeOwner($purchaseOrder);
 
-        abort_unless($purchaseOrder->status === 'issued', 422, 'Only unconfirmed orders can be cancelled.');
+        abort_unless(
+            $purchaseOrder->status === 'issued',
+            422,
+            'Only unconfirmed orders can be cancelled.'
+        );
 
-        $purchaseOrder->update(['status' => 'cancelled']);
+        $purchaseOrder->update([
+            'status' => 'cancelled',
+        ]);
 
         return back()->with('success', 'Purchase order cancelled.');
     }
 
-    public function confirmDelivery(PurchaseOrder $purchaseOrder)
+    public function confirmDelivery(PurchaseOrder $purchaseOrder): RedirectResponse
     {
-        abort_unless(
-            $purchaseOrder->quotation->event->user_id === auth()->id(),
-            403
-        );
+        $this->authorizeOwner($purchaseOrder);
 
         $purchaseOrder->update([
             'delivery_status' => 'completed',
@@ -54,33 +62,11 @@ class PurchaseOrderController extends Controller
         return back()->with('success', 'Delivery confirmed successfully.');
     }
 
-    public function uploadInvoice(Request $request, PurchaseOrder $purchaseOrder): RedirectResponse
-    {
-        $this->authorizeOwner($purchaseOrder);
-
-        $validated = $request->validate([
-            'invoice_no' => ['required', 'string', 'max:100'],
-            'invoice_file' => ['nullable', 'file', 'max:8192'],
-        ]);
-
-        if ($request->hasFile('invoice_file')) {
-            $validated['invoice_file'] = $request->file('invoice_file')->store('invoices', 'public');
-        }
-
-        $validated['invoice_date'] = now();
-
-        $purchaseOrder->update($validated);
-
-        $purchaseOrder->payment()->firstOrCreate([], [
-            'amount_paid' => $purchaseOrder->total_price,
-            'payment_status' => 'unpaid',
-        ]);
-
-        return back()->with('success', 'Invoice details saved.');
-    }
-
     private function authorizeOwner(PurchaseOrder $purchaseOrder): void
     {
-        abort_unless($purchaseOrder->quotation->event->user_id === Auth::id(), 403);
+        abort_unless(
+            $purchaseOrder->quotation->event->user_id === Auth::id(),
+            403
+        );
     }
 }

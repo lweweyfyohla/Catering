@@ -35,6 +35,7 @@ class QuotationController extends Controller
     public function updateStatus(Request $request, Quotation $quotation): RedirectResponse
     {
         abort_unless($quotation->supplier_id === Auth::user()->supplier_id, 403);
+
         if ($quotation->status !== 'pending') {
             return back()->with('error', 'This quote request has already been resolved.');
         }
@@ -48,9 +49,20 @@ class QuotationController extends Controller
         ]);
 
         if ($validated['status'] === 'accepted') {
+
             $purchaseOrder = PurchaseOrder::create([
                 'quotation_id' => $quotation->id,
-                'po_number' => 'PO-' . now()->format('Y') . '-' . str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
+
+                // Auto-generated PO number
+                'po_number' => 'PO-' . now()->format('Y') . '-' .
+                    str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
+
+                // Auto-generated Invoice number
+                'invoice_no' => 'INV-' . now()->format('Y') . '-' .
+                    str_pad((string) ($quotation->id * 111), 4, '0', STR_PAD_LEFT),
+
+                'invoice_date' => now(),
+
                 'total_price' => $quotation->total_price,
                 'status' => 'issued',
                 'delivery_status' => 'pending',
@@ -59,6 +71,7 @@ class QuotationController extends Controller
 
             Payment::create([
                 'purchase_order_id' => $purchaseOrder->id,
+                'invoice_no' => $purchaseOrder->invoice_no,
                 'amount_paid' => $purchaseOrder->total_price,
                 'payment_status' => 'unpaid',
             ]);
@@ -67,7 +80,7 @@ class QuotationController extends Controller
                 'status' => 'ordered',
             ]);
 
-            return back()->with('success', 'Quote confirmed. The order has been sent to Purchase Orders.');
+            return back()->with('success', 'Quote accepted. Purchase Order and Invoice created.');
         }
 
         return back()->with('success', 'Quote request rejected.');
