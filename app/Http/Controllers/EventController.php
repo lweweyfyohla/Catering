@@ -31,7 +31,7 @@ class EventController extends Controller
         $validated = $request->validate([
             'event_name' => ['required', 'string', 'max:150'],
             'event_type' => ['required', 'in:wedding,corporate,social,other'],
-            'event_date' => ['required', 'date'],
+            'event_date' => ['required', 'date', 'after:today'],
             'guest_count' => ['required', 'integer', 'min:1'],
             'notes' => ['nullable', 'string'],
         ]);
